@@ -3,13 +3,15 @@ import curses
 
 stdscr = curses.initscr()
 curses.curs_set(0)
-snakeH, snakeW = stdscr.getmaxyx()
-w = curses.newwin(snakeH, snakeW, 0, 0)
+screenH, screenW = 25, 60
+w = curses.newwin(screenH, screenW, 0, 0)
+w.border(0)
+curses.noecho()
 w.keypad(1)
-w.timeout(150)
+w.timeout(100)
 
-snake_x = snakeW // 5
-snake_y = snakeH // 5
+snake_x = screenW // 5
+snake_y = screenH // 5
 
 snake = [
     [snake_y, snake_x],
@@ -17,16 +19,17 @@ snake = [
     [snake_y, snake_x - 2]
 ]
 
-food = [int(snakeH / 2), int(snakeW / 2)]
+food = [int(screenH / 2), int(screenW / 2)]
 w.addch(food[0], food[1], '*')
-
+w.addstr(0, 3, 'Score: ')
+w.addstr(24, 28, 'Snake')
 key = curses.KEY_RIGHT
 
 while True:
     nextKey = w.getch()
     key = key if nextKey == -1 else nextKey
 
-    if snake[0][0] in [0, snakeH] or snake[0][1] in [0, snakeW] or snake[0] in snake[1:]:
+    if snake[0][0] in [0, screenH] or snake[0][1] in [0, screenW] or snake[0] in snake[1:]:
         curses.endwin()
         quit()
 
@@ -47,8 +50,8 @@ while True:
         food = None
         while food is None:
             nf = [
-                random.randint(1, snakeH - 1),
-                random.randint(1, snakeW - 1)
+                random.randint(1, screenH - 2),
+                random.randint(1, screenW - 2)
             ]
             food = nf if nf not in snake else None
         w.addch(food[0], food[1], '*')
